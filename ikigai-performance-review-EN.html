@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ikigai · Performance Review – Schurter R&D</title>
+<style>
+  
+
+  :root {
+    --love: #C2185B;
+    --good: #1565C0;
+    --need: #2E7D32;
+    --paid: #E65100;
+    --bg: #F7F5F2;
+    --card: #FFFFFF;
+    --border: rgba(0,0,0,0.08);
+    --text: #1A1A1A;
+    --muted: #6B6B6B;
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: #1A1A1A;
+    color: white;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  header h1 {
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  header span {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  .intro {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 16px;
+  }
+
+  .intro-block .dot { width: 8px; height: 8px; border-radius: 50%; margin-bottom: 6px; }
+  .intro-block strong { font-size: 13px; font-weight: 500; display: block; margin-bottom: 2px; }
+  .intro-block p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  .name-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .name-section label { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .name-section input {
+    flex: 1;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: white;
+    color: var(--text);
+    outline: none;
+    max-width: 320px;
+  }
+  .name-section input:focus { border-color: #1A1A1A; }
+
+  .date-section { font-size: 12px; color: var(--muted); margin-left: auto; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+
+  .zone-card {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .zone-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .zone-card.love::before { background: var(--love); }
+  .zone-card.good::before { background: var(--good); }
+  .zone-card.need::before { background: var(--need); }
+  .zone-card.paid::before { background: var(--paid); }
+
+  .zone-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+  .zone-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .zone-card.love .zone-icon { background: #FCE4EC; }
+  .zone-card.good .zone-icon { background: #E3F2FD; }
+  .zone-card.need .zone-icon { background: #E8F5E9; }
+  .zone-card.paid .zone-icon { background: #FFF3E0; }
+
+  .zone-title { font-size: 14px; font-weight: 500; }
+  .zone-card.love .zone-title { color: var(--love); }
+  .zone-card.good .zone-title { color: var(--good); }
+  .zone-card.need .zone-title { color: var(--need); }
+  .zone-card.paid .zone-title { color: var(--paid); }
+  .zone-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .items-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .item-row { display: flex; align-items: center; gap: 8px; }
+  .item-row input[type=text] {
+    flex: 1;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #FAFAFA;
+    color: var(--text);
+    outline: none;
+    height: 32px;
+  }
+  .item-row input[type=text]:focus { border-color: #999; background: white; }
+
+  .score-wrap { display: flex; align-items: center; gap: 4px; }
+  .score-wrap input[type=range] {
+    width: 64px;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+  .zone-card.love .score-wrap input[type=range] { accent-color: var(--love); }
+  .zone-card.good .score-wrap input[type=range] { accent-color: var(--good); }
+  .zone-card.need .score-wrap input[type=range] { accent-color: var(--need); }
+  .zone-card.paid .score-wrap input[type=range] { accent-color: var(--paid); }
+
+  .score-num { font-size: 12px; font-weight: 500; color: var(--muted); min-width: 18px; text-align: right; }
+  .del-btn { background: none; border: none; color: #CCC; cursor: pointer; font-size: 16px; line-height: 1; padding: 0 2px; flex-shrink: 0; }
+  .del-btn:hover { color: #999; }
+
+  .add-btn {
+    margin-top: 8px;
+    width: 100%;
+    padding: 6px;
+    background: none;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .add-btn:hover { background: #FAFAFA; }
+
+  .viz-section {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 28px;
+  }
+  .viz-section h2 { font-family: Arial, sans-serif; font-size: 18px; font-weight: 400; margin-bottom: 4px; }
+  .viz-section p { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+
+  #ikigai-svg { width: 100%; display: block; }
+
+  .results-section { margin-bottom: 28px; }
+  .results-section h2 { font-family: Arial, sans-serif; font-size: 18px; font-weight: 400; margin-bottom: 16px; }
+  .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .res-card {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 16px 18px;
+  }
+  .res-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .res-score { font-family: Arial, sans-serif; font-size: 28px; font-weight: 400; margin-bottom: 4px; }
+  .res-items { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .res-tip { font-size: 11px; color: #AAA; font-style: italic; }
+
+  .notes-section {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    margin-bottom: 28px;
+  }
+  .notes-section h2 { font-family: Arial, sans-serif; font-size: 18px; font-weight: 400; margin-bottom: 12px; }
+  .notes-section textarea {
+    width: 100%;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #FAFAFA;
+    color: var(--text);
+    resize: vertical;
+    outline: none;
+    min-height: 100px;
+  }
+  .notes-section textarea:focus { border-color: #999; background: white; }
+
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-primary {
+    padding: 11px 20px;
+    background: #1A1A1A;
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .btn-primary:hover { background: #333; }
+  .btn-secondary {
+    padding: 11px 20px;
+    background: white;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .btn-secondary:hover { background: #FAFAFA; }
+
+  @media print {
+    header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .actions, .add-btn, .del-btn { display: none; }
+    body { background: white; }
+    .zone-card, .viz-section, .res-card, .notes-section { break-inside: avoid; }
+  }
+
+  @media (max-width: 600px) {
+    .grid { grid-template-columns: 1fr; }
+    .results-grid { grid-template-columns: 1fr; }
+    .intro { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Ikigai · Performance Review</h1>
+  <span>Schurter R&D</span>
+</header>
+
+<div class="container">
+
+  <div class="intro">
+    <div class="intro-block">
+      <div class="dot" style="background:var(--love)"></div>
+      <strong>What you love</strong>
+      <p>Passion & enthusiasm – what makes you lose track of time?</p>
+    </div>
+    <div class="intro-block">
+      <div class="dot" style="background:var(--good)"></div>
+      <strong>What you're good at</strong>
+      <p>Strengths & skills – what do you do better than most?</p>
+    </div>
+    <div class="intro-block">
+      <div class="dot" style="background:var(--need)"></div>
+      <strong>What the team needs</strong>
+      <p>Mission & relevance – where do you see gaps?</p>
+    </div>
+    <div class="intro-block">
+      <div class="dot" style="background:var(--paid)"></div>
+      <strong>Where you create value</strong>
+      <p>Contribution & impact – what benefits the company?</p>
+    </div>
+  </div>
+
+  <div class="name-section">
+    <label>Employee</label>
+    <input type="text" id="ma-name" placeholder="Enter name…" oninput="redraw()">
+    <div class="date-section" id="date-display"></div>
+  </div>
+
+  <div class="grid" id="zones-grid"></div>
+
+  <div class="viz-section">
+    <h2>Ikigai Profile</h2>
+    <p>Circle size reflects the average score. The green centre point shows the overall overlap.</p>
+    <svg id="ikigai-svg" viewBox="0 0 680 480"></svg>
+  </div>
+
+  <div class="results-section">
+    <h2>Development areas</h2>
+    <div class="results-grid" id="results-grid"></div>
+  </div>
+
+  <div class="notes-section">
+    <h2>Meeting notes</h2>
+    <textarea id="notes" placeholder="Key points from the conversation, agreed actions, next steps…"></textarea>
+  </div>
+
+  <div class="actions">
+    <button class="btn-primary" onclick="window.print()">Print / Save as PDF</button>
+    <button class="btn-secondary" onclick="exportJSON()">Save profile (JSON)</button>
+    <button class="btn-secondary" onclick="loadJSON()">Load profile</button>
+    <input type="file" id="file-input" accept=".json" style="display:none" onchange="handleFile(this)">
+  </div>
+
+</div>
+
+<script>
+const ZONES = [
+  { id:'love', cls:'love', label:'What you love', sub:'What brings you joy & energy at work', icon:'♥', placeholder:'e.g. mentoring, solving complex problems', color:'#C2185B' },
+  { id:'good', cls:'good', label:'What you are good at', sub:'Your skills, strengths & expertise', icon:'★', placeholder:'e.g. analysis, stakeholder management', color:'#1565C0' },
+  { id:'need', cls:'need', label:'What the world needs', sub:'What the team / company / market needs', icon:'◎', placeholder:'e.g. technical leadership, process improvement', color:'#2E7D32' },
+  { id:'paid', cls:'paid', label:'What you can be paid for', sub:'Where you deliver measurable value', icon:'◆', placeholder:'e.g. product delivery, customer solutions', color:'#E65100' },
+];
+
+const state = {};
+ZONES.forEach(z => { state[z.id] = [{text:'',score:3}]; });
+
+document.getElementById('date-display').textContent = new Date().toLocaleDateString('en-GB', {day:'2-digit',month:'long',year:'numeric'});
+
+function renderZones() {
+  const grid = document.getElementById('zones-grid');
+  grid.innerHTML = '';
+  ZONES.forEach(z => {
+    const card = document.createElement('div');
+    card.className = `zone-card ${z.cls}`;
+    card.innerHTML = `
+      <div class="zone-header">
+        <div class="zone-icon">${z.icon}</div>
+        <div>
+          <div class="zone-title">${z.label}</div>
+          <div class="zone-sub">${z.sub}</div>
+        </div>
+      </div>
+      <div class="items-list" id="items-${z.id}"></div>
+      <button class="add-btn" onclick="addItem('${z.id}')">+ Add entry</button>
+    `;
+    grid.appendChild(card);
+    renderItems(z.id);
+  });
+}
+
+function renderItems(zid) {
+  const container = document.getElementById('items-'+zid);
+  if (!container) return;
+  container.innerHTML = '';
+  state[zid].forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'item-row';
+    row.innerHTML = `
+      <input type="text" placeholder="${ZONES.find(z=>z.id===zid).placeholder}" value="${item.text}"
+        oninput="state['${zid}'][${i}].text=this.value;redraw()">
+      <div class="score-wrap">
+        <input type="range" min="1" max="5" step="1" value="${item.score}"
+          oninput="state['${zid}'][${i}].score=+this.value;updateScoreLabel(this);redraw()">
+        <span class="score-num">${item.score}</span>
+      </div>
+      ${state[zid].length>1?`<button class="del-btn" onclick="removeItem('${zid}',${i})" title="Remove">×</button>`:'<span style="width:20px"></span>'}
+    `;
+    container.appendChild(row);
+  });
+}
+
+function updateScoreLabel(input) {
+  const span = input.parentElement.querySelector('.score-num');
+  if (span) span.textContent = input.value;
+}
+
+function addItem(zid) { state[zid].push({text:'',score:3}); renderItems(zid); redraw(); }
+function removeItem(zid,i) { state[zid].splice(i,1); renderItems(zid); redraw(); }
+
+function zoneScore(zid) {
+  const items = state[zid].filter(it=>it.text.trim());
+  if (!items.length) return 0;
+  return items.reduce((s,it)=>s+it.score,0);
+}
+
+function maxZoneScore(zid) {
+  const items = state[zid].filter(it=>it.text.trim());
+  if (!items.length) return 1;
+  return items.length * 5;
+}
+
+function redraw() { drawSVG(); drawResults(); }
+
+function drawSVG() {
+  // Classic Ikigai layout: Love=top, Good At=left, Paid For=bottom, World Needs=right
+  // Intersections: Passion(Love+Good, top-left), Mission(Love+Need, top-right),
+  //                Profession(Good+Paid, bottom-left), Vocation(Need+Paid, bottom-right)
+  const svg = document.getElementById('ikigai-svg');
+  const W=680, H=480, cx=340, cy=240, offset=62, baseR=125;
+
+  // Circle centres: top, left, bottom, right
+  const centres = [
+    {zid:'love',  cx:cx,         cy:cy-offset, color:'#F9A825', label:'What you love',         anchor:'middle', lx:cx,       ly:cy-offset-baseR-14},
+    {zid:'good',  cx:cx-offset,  cy:cy,        color:'#8BC34A', label:"What you are good at",   anchor:'end',    lx:cx-offset-baseR-10, ly:cy+4},
+    {zid:'paid',  cx:cx,         cy:cy+offset, color:'#80DEEA', label:'What you can be paid for', anchor:'middle', lx:cx,    ly:cy+offset+baseR+18},
+    {zid:'need',  cx:cx+offset,  cy:cy,        color:'#EF9A9A', label:'What the world needs',  anchor:'start',  lx:cx+offset+baseR+10, ly:cy+4},
+  ];
+
+  // Intersection label positions (midpoints between circle centres)
+  const intersectionLabels = [
+    { label:'Passion',    x:cx-offset*0.7, y:cy-offset*0.7, color:'#C62828' },
+    { label:'Mission',    x:cx+offset*0.7, y:cy-offset*0.7, color:'#1B5E20' },
+    { label:'Profession', x:cx-offset*0.7, y:cy+offset*0.7, color:'#0D47A1' },
+    { label:'Vocation',   x:cx+offset*0.7, y:cy+offset*0.7, color:'#E65100' },
+  ];
+
+  let html = '<defs>';
+  centres.forEach((c,i) => {
+    html += `<radialGradient id="rg${i}" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="${c.color}" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="${c.color}" stop-opacity="0.08"/>
+    </radialGradient>`;
+  });
+  html += '</defs>';
+
+  // Draw circles sized by score
+  centres.forEach((c,i) => {
+    const norm = zoneScore(c.zid) / Math.max(maxZoneScore(c.zid), 1);
+    const r = baseR * (0.6 + norm * 0.4);
+    html += `<circle cx="${c.cx}" cy="${c.cy}" r="${r}" fill="url(#rg${i})" stroke="${c.color}" stroke-width="1.8" opacity="0.85"/>`;
+  });
+
+  // Ikigai centre dot
+  const overallNorm = centres.reduce((s,c)=>s+zoneScore(c.zid)/Math.max(maxZoneScore(c.zid),1),0)/4;
+  const dr = Math.max(8, overallNorm*32);
+  html += `<circle cx="${cx}" cy="${cy}" r="${dr}" fill="#33691E" opacity="0.9"/>`;
+  // ikigai label removed
+
+  // Intersection labels
+  intersectionLabels.forEach(il => {
+    html += `<text x="${il.x}" y="${il.y+4}" text-anchor="middle" font-size="11" font-weight="600" fill="${il.color}" font-family="Arial,sans-serif">${il.label}</text>`;
+  });
+
+  // Zone labels with score
+  centres.forEach(c => {
+    const sc = `${zoneScore(c.zid)}/${maxZoneScore(c.zid)}`;
+    html += `<text x="${c.lx}" y="${c.ly}" text-anchor="${c.anchor}" font-size="12" font-weight="500" fill="#333" font-family="Arial,sans-serif">${c.label}</text>`;
+    html += `<text x="${c.lx}" y="${c.ly+15}" text-anchor="${c.anchor}" font-size="11" fill="#888" font-family="Arial,sans-serif">${sc}</text>`;
+  });
+
+  const name = document.getElementById('ma-name')?.value||'';
+  if (name) html += `<text x="12" y="20" font-size="13" font-weight="500" fill="#1A1A1A" font-family="Arial,sans-serif">${name}</text>`;
+
+  svg.innerHTML = html;
+}
+
+function drawResults() {
+  const grid = document.getElementById('results-grid');
+  const intersections = [
+    { label:'Passion', desc:'Love + Good At', zones:['love','good'], color:'#C2185B',
+      tip:'What you love AND are skilled at — but does it serve a real need?' },
+    { label:'Mission', desc:'Love + World Needs', zones:['love','need'], color:'#2E7D32',
+      tip:'What you care about AND the world needs — but can you make a living from it?' },
+    { label:'Profession', desc:'Good At + Paid For', zones:['good','paid'], color:'#1565C0',
+      tip:'What you are skilled at AND paid for — but do you actually enjoy it?' },
+    { label:'Vocation', desc:'World Needs + Paid For', zones:['need','paid'], color:'#E65100',
+      tip:'What the world needs AND pays for — but are you the right person for it?' },
+  ];
+  grid.innerHTML = '';
+  intersections.forEach(sect => {
+    const s0 = zoneScore(sect.zones[0]), m0 = maxZoneScore(sect.zones[0]);
+    const s1 = zoneScore(sect.zones[1]), m1 = maxZoneScore(sect.zones[1]);
+    const total = s0 + s1;
+    const maxTotal = m0 + m1;
+    const topItems = [...state[sect.zones[0]],...state[sect.zones[1]]]
+      .filter(it=>it.text.trim()).sort((a,b)=>b.score-a.score).slice(0,3).map(it=>it.text).join(' · ');
+    const card = document.createElement('div');
+    card.className = 'res-card';
+    card.innerHTML = `
+      <div class="res-label" style="color:${sect.color}">${sect.label} — ${sect.desc}</div>
+      <div class="res-score" style="color:${sect.color}">${total}<span style="font-size:14px;color:#CCC"> /${maxTotal}</span></div>
+      ${topItems?`<div class="res-items">${topItems}</div>`:''}
+      <div class="res-tip">${sect.tip}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function exportJSON() {
+  const data = {
+    version: 1,
+    date: new Date().toISOString(),
+    name: document.getElementById('ma-name').value,
+    notes: document.getElementById('notes').value,
+    state: state
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `ikigai-${(data.name||'profile').replace(/\s+/g,'-').toLowerCase()}-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+
+function loadJSON() { document.getElementById('file-input').click(); }
+
+function handleFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.name) document.getElementById('ma-name').value = data.name;
+      if (data.notes) document.getElementById('notes').value = data.notes;
+      if (data.state) {
+        ZONES.forEach(z => {
+          if (data.state[z.id]) { state[z.id] = data.state[z.id]; renderItems(z.id); }
+        });
+      }
+      redraw();
+    } catch(err) { alert('Error loading file.'); }
+  };
+  reader.readAsText(file);
+}
+
+renderZones();
+redraw();
+</script>
+</body>
+</html>
